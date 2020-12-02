@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "connection-timeout",
+      "type": "java.lang.String",
+      "description": "Description for connection-timeout."
+    },
+    {
+      "name": "spring.http.multipart.maxRequestSize",
+      "type": "java.lang.String",
+      "description": "Description for spring.http.multipart.maxRequestSize."
+    }
+  ] }

@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>文件</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://getbootstrap.com/docs/4.5/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/wind.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="js/winpan.js"></script>
+</head>
+<body style="background-color: #F0F0F0" id="body">
+<div class="container" style="height: 100px"></div>
+<div id="div_file_list"></div>
+
+<script>
+    function listFiles(dirPath) {
+        $('#div_file_list').html('');
+        var path=dirPath==null?'home':'home?dirPath='+dirPath;
+        $.ajax({
+            url:path,
+            async:true,
+            success:function (params) {
+                for(var i=0;i<params.length;i++){
+                    var detail=params[i];
+                    var fileId=detail.fileId;
+                    var fileName=detail.fileName;
+                    var uploadTime=detail.uploadTime;
+                    var fileSize=detail.fileSize;
+                    var fileType=detail.fileType;
+                    var fileDesc=detail.fileDesc;
+                    var realPath=encodeURI(detail.realPath);
+
+                    var fileDisplayItem='<div class="col-lg-6 file_list_style">\n' +
+                        '    <img class="file_icon_style" src='+fileFormatIcon(fileType)+' alt="">\n' +
+                        '    <span class="file_name_style" onclick="processClickEvent(\''+fileType+'\',\''+realPath+'\')">'+fileName+'</span>\n' +
+                        '    <span class="file_time_style">'+formatDate(uploadTime)+'</span>\n' +
+                        '    <span class="file_time_style">'+formatFileSize(fileSize)+'</span>\n' +
+                        '</div>\n' +
+                        '<div style="height: 5px"></div>';
+                    if(dirPath!=null){
+                        $('#div_file_list').append(fileDisplayItem);
+                    }else {
+                        $('#div_file_list').append(fileDisplayItem);
+                    }
+
+                }
+            }
+        })
+    }
+
+    function parseRealPath(){
+        var search=location.search;
+        return getSearchString('realPath',search);
+    }
+
+    //key(需要检索的键） url（传入的需要分割的url地址，例：?id=2&age=18）
+    function getSearchString(key, Url) {
+        var str = Url;
+        str = str.substring(1, str.length); // 获取URL中?之后的字符（去掉第一位的问号）
+        // 以&分隔字符串，获得类似name=xiaoli这样的元素数组
+        var arr = str.split("&");
+        var obj = new Object();
+        // 将每一个数组元素以=分隔并赋给obj对象
+        for (var i = 0; i < arr.length; i++) {
+            var tmp_arr = arr[i].split("=");
+            obj[decodeURIComponent(tmp_arr[0])] = decodeURIComponent(tmp_arr[1]);
+        }
+        return obj[key];
+    }
+
+
+    function downloadFile(realPath) {
+        location.href='download?realPath='+realPath;
+    }
+
+
+    function processClickEvent(fileType,realPath){
+        if(fileType==='dir'){
+            location.href="?realPath=" + encodeURI(realPath);
+        }else {
+            downloadFile(realPath);
+        }
+    }
+    listFiles(parseRealPath())
+</script>
+</body>
+</html>

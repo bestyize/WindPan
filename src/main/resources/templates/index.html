@@ -3,28 +3,23 @@
 <head>
     <meta charset="utf-8">
     <title>文件</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="https://getbootstrap.com/docs/4.5/dist/css/bootstrap.min.css" rel="stylesheet">
+<!--    <link href="https://getbootstrap.com/docs/4.5/dist/css/bootstrap.min.css" rel="stylesheet">-->
+<!--    <link href="css/wind.css" rel="stylesheet">-->
+<!--    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>-->
+<!--    <script src="js/winpan.js"></script>-->
+<!--    &lt;!&ndash; Bootstrap core CSS &ndash;&gt;-->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/wind.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="js/jquery-3.5.1.js"></script>
     <script src="js/winpan.js"></script>
 </head>
 <body style="background-color: #F0F0F0" id="body">
-<div class="thewind_nav_top">
-    <div class="col-8 col-md-6 col-lg-5 col-xl-5 thewind_div_center_nav" >
-        <p class="thewind_banner_text">TheWind</p>
-        <form role="search">
-            <div >
-                <input type="text" class="thewind_search_text_field">
-                <button type="submit" class="thewind_search_button">搜索</button>
-                <button type="submit" class="thewind_search_button" style="background-color: white;margin-left: 10px">上传</button>
-                <button type="button" class="thewind_search_button" style="background-color: white;margin-left: 10px;">我的</button>
-            </div>
-        </form>
-    </div>
+<div id="div_top_area" class="navbar thewind_nav_top justify-content-center fixed-top">
+    <div id="div_brand_wind" class="card-text mr-4 font-weight-bold text-dark navbar-brand wind_hand_style btn-lg" style="font-size: 40px" onclick="backToDomain()">TheWind</div>
+    <input id="search_keyword" type="text" class="thewind_search_text_field ml-4 input-group-text btn-lg" onsubmit="searchFile()"><div id="div_search_button" class="thewind_search_button float-right ml-2 wind_hand_style btn-lg" onclick="searchFile()">搜索</div>
+    <div id="div_login_button" class="thewind_search_button float-right ml-4 wind_hand_style btn-lg">登录</div>
 </div>
-<div style="height: 50px"></div>
+<div id="div_top_sep"></div>
 <!--弹窗-->
 <!--<div id="mask" class="file_upload_style col-lg-6 " >-->
 <!--    <form id="uploadForm" enctype="multipart/form-data" style="float: right;border: none">-->
@@ -32,65 +27,69 @@
 <!--        <button id="upload" onclick="uploadFile()" style="float: left;border: none;margin-top: 1em;">上传文件</button>-->
 <!--    </form>-->
 <!--</div>-->
-
-<div id="mask" class="file_upload_style col-lg-6 " >
-    <input id="files" type="file"  name="files" style="float: left;border: none;margin-top: 1em;"/>
-    <button id="upload" onclick="uploadFile()" style="float: left;border: none;margin-top: 1em;">上传文件</button>
+<div id="div_upload_area">
+    <div id="upload_area" class="file_upload_style col-lg-6" style="min-height:60px" >
+        <button id="upload" onclick="uploadFile()" style="float: right;border: none;margin-top: 1em;">上传文件</button>
+        <input id="files" type="file"  name="files" style="float: right;border: none;margin-top: 1em;"/>
+    </div>
 </div>
-<div style="height: 50px"></div>
+
+<div style="height: 30px"></div>
 <div id="div_file_list"></div>
+
+<script>
+    function isMobile(){
+        let ua = navigator.userAgent; //获取浏览器UA
+        return ua.includes('Android') || ua.includes('Mobile')||ua.includes('iPhone');
+    }
+
+    function getHeaderHeight(){
+        return isMobile()?160:60;
+    }
+
+    function getUploadFieldHeight(){
+        return isMobile()?160:60;
+    }
+
+    function getFileItemHeight(){
+        return isMobile()?160:60;
+    }
+
+    function getTextSize(){
+        return isMobile()?35:16;
+    }
+    function getIconSize(){
+        return isMobile()?100:40;
+    }
+</script>
 
 <script>
     function listFiles(dirPath) {
         $('#div_file_list').html('');
-        var path=dirPath==null?'home':'home?dirPath='+dirPath;
+        let path=dirPath==null?'home':'home?dirPath='+dirPath;
         $.ajax({
             url:path,
             async:true,
             success:function (params) {
-                for(var i=0;i<params.length;i++){
-                    var detail=params[i];
-                    var fileId=detail.fileId;
-                    var fileName=detail.fileName;
-                    var uploadTime=detail.uploadTime;
-                    var fileSize=detail.fileSize;
-                    var fileType=detail.fileType;
-                    var fileDesc=detail.fileDesc;
-                    var realPath=encodeURI(detail.realPath);
-
-                    var fileDisplayItem='<div class="col-lg-6 file_list_style" onclick="processClickEvent(\''+fileType+'\',\''+realPath+'\')">\n' +
-                        '    <img class="file_icon_style" src='+fileFormatIcon(fileType)+' alt="">\n' +
-                        '    <span class="file_name_style" >'+fileName+'</span>\n' +
-                        '    <span class="file_time_style">'+formatDate(uploadTime)+'</span>\n' +
-                        '    <span class="file_time_style">'+formatFileSize(fileSize)+'</span>\n' +
-                        '    <span class="file_desc_style">'+fileDesc+'</span>'+
-                        '</div>\n' +
-                        '<div style="height: 5px"></div>';
-                    if(dirPath!=null){
-                        $('#div_file_list').append(fileDisplayItem);
-                    }else {
-                        $('#div_file_list').append(fileDisplayItem);
-                    }
-
-                }
+                parseFileListInfo(params);
             }
         })
     }
 
     function parseRealPath(){
-        var search=location.search;
+        let search=location.search;
         return getSearchString('realPath',search);
     }
 
     //key(需要检索的键） url（传入的需要分割的url地址，例：?id=2&age=18）
     function getSearchString(key, Url) {
-        var str = Url;
+        let str = Url;
         str = str.substring(1, str.length); // 获取URL中?之后的字符（去掉第一位的问号）
-        var arr = str.split("&");
-        var obj = {};
+        let arr = str.split("&");
+        let obj = {};
         // 将每一个数组元素以=分隔并赋给obj对象
-        for (var i = 0; i < arr.length; i++) {
-            var tmp_arr = arr[i].split("=");
+        for (let i = 0; i < arr.length; i++) {
+            let tmp_arr = arr[i].split("=");
             obj[decodeURIComponent(tmp_arr[0])] = decodeURIComponent(tmp_arr[1]);
         }
         return obj[key];
@@ -111,7 +110,12 @@
 
     function uploadFile(){
         let formData=new FormData();
-        formData.append("files",$('#files')[0].files[0]);
+        let f=$('#files')[0].files[0];
+        if(f==null){
+            alert('未选择文件');
+            return ;
+        }
+        formData.append("files",f);
         formData.append("path",parseRealPath());
         $.ajax({
             url: '/upload',
@@ -129,8 +133,93 @@
         });
     }
 
-
     listFiles(parseRealPath())
 </script>
+
+<script>
+    let search_keyword=$('#search_keyword');
+    let div_upload_area=$('#div_upload_area');
+    function searchFile() {
+        let formData=new FormData();
+        let path=parseRealPath();
+        let keyword=encodeURI(search_keyword.val());
+        if(keyword==null||keyword.length===0){
+            alert('请输入关键词');
+            return ;
+        }
+        formData.append('path',path==null?'home':path);
+        formData.append('keyword',keyword);
+        $.ajax({
+            url:'/search',
+            type: 'POST',
+            cache: false,
+            data: formData,
+            async:true,
+            processData: false,
+            contentType: false,
+            success:function (params) {
+                $('#div_file_list').html('');
+                parseFileListInfo(params);
+            }
+        });
+    }
+
+    function parseFileListInfo(params) {
+        for(let i=0;i<params.length;i++){
+            let detail=params[i];
+            let fileId=detail.fileId;
+            let fileName=detail.fileName;
+            let uploadTime=detail.uploadTime;
+            let fileSize=detail.fileSize;
+            let fileType=detail.fileType;
+            let fileDesc=detail.fileDesc;
+            let realPath=encodeURI(detail.realPath);
+
+            let fileDisplayItem='<div class="navbar thewind_nav_top col-11 col-lg-6 m-auto wind_hand_style" style="min-height:'+getFileItemHeight()+'px" onclick="processClickEvent(\''+fileType+'\',\''+realPath+'\')">\n' +
+                '    <img class="file_icon_style float-left" src='+fileFormatIcon(fileType)+' alt="" style="width: '+getIconSize()+'px;height: '+getIconSize()+'px">\n' +
+                '    <span class="file_name_style" style="font-size: '+getTextSize()+'px" >'+fileName+'</span>\n' +
+                '    <span class="file_desc_style" style="font-size: '+getTextSize()+'px">'+fileDesc+'</span>'+
+                '    <span style="font-size: '+getTextSize()+'px">'+formatFileSize(fileSize)+'</span>\n' +
+                '    <span style="font-size: '+getTextSize()+'px">'+formatDate(uploadTime)+'</span>\n' +
+                '</div>\n' +
+                '<div style="height: 10px"></div>';
+            $('#div_file_list').append(fileDisplayItem);
+
+        }
+    }
+
+    function backToDomain(){
+        window.location.href='/';
+    }
+    //绑定回车事件
+    search_keyword.on('keypress',function (e) {
+        if(e.keyCode===13){
+            searchFile();
+        }
+    });
+
+    function adjustUploadArea(){
+        let uploadArea=
+            '    <div id="upload_area" class="navbar thewind_nav_top col-11 col-lg-6 m-auto" style="min-height:'+getFileItemHeight()+'px;" >\n' +
+            '        <input id="files" type="file"  name="files" class="btn-lg border-0"/>\n' +
+            '        <button id="upload" onclick="uploadFile()" class="btn-lg border-0">上传文件</button>\n' +
+            '    </div>';
+        div_upload_area.html(uploadArea);
+        $('#div_top_area').height(getFileItemHeight());
+        $('#div_top_sep').height(getFileItemHeight()+40);
+        $('#div_brand_wind').css('font-size',isMobile()?70:40);
+        search_keyword.css('height',isMobile()?70:40,'font-size',getTextSize());
+        $('#div_login_button').css('font-size',getTextSize());
+        $('#div_search_button').css('font-size',getTextSize());
+    }
+
+    adjustUploadArea();
+
+
+
+</script>
+
+
+
 </body>
 </html>

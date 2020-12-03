@@ -1,10 +1,10 @@
 .file_list_style {
     background-color: white;
-    height: 3em;
+    height: 4em;
     margin: auto;
     padding: 10px;
     box-shadow: 0 5px 5px rgba(0,0,0,0.1);
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
 }
 .file_icon_style{
@@ -14,13 +14,11 @@
 }
 .file_name_style{
     margin-left: 1em;
-    font-size: medium;
-    color: blue;
     float: left;
 }
 .file_desc_style{
     margin-left: 1em;
-    font-size: small;
+    font-size: xx-small;
     color: #666666;
     float: right;
 }
@@ -29,7 +27,7 @@
     margin-left: 1em;
     margin-right: 1em;
     float: right;
-    font-size: medium;
+    font-size: xx-large;
 }
 .file_time_style{
     margin-left: 1em;
@@ -39,11 +37,13 @@
 }
 
 .file_upload_style{
-    margin: auto;
-    height: 60px;
     background-color: white;
     box-shadow: 0 5px 5px rgba(0,0,0,0.1);
     border-radius: 5px;
+}
+
+.wind_hand_style{
+    cursor: pointer;
 }
 
 .thewind_background{
@@ -51,8 +51,6 @@
     background-color: #F0F0F0;
 }
 .thewind_nav_top{
-    max-height: 50px;
-    padding: 10px;
     background-color: #FFFFFF;
     box-shadow:0 5px 5px rgba(0,0,0,0.1);
 }
@@ -75,19 +73,12 @@
 }
 
 .thewind_search_text_field{
-    height: 2em;
-    width: 15em;
-    float: left;
-    margin-left: 2em;
     background-color:#F6F6F6;
+    min-height: 2em;
     border: none;
 }
 .thewind_search_button{
-    height: 2em;
-    float: left;
-    margin: auto;
-    text-align: center;
-    background-color:#F6F6F6;
+    background-color:white;
     border: rgba(0,0,0,0);
 }
 .thewind_top_self_area{
@@ -129,3 +120,16 @@
     padding: 10px;
     margin-top: 10px;
 }
+.navbarr {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -ms-flex-align: center;
+    align-items: center;
+    -ms-flex-pack: justify;
+    justify-content: normal;
+    padding: 0.5rem 1rem;
+}
+

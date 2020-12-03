@@ -13,4 +13,8 @@ public class FileTypeHelper {
         }
         return fileName.substring(fileName.lastIndexOf(".")+1);
     }
+
+    public static String getOffPath(String fullPath,String basePath,String fileName){
+        return fullPath.substring(basePath.length()).replaceAll(fileName,"");
+    }
 }
